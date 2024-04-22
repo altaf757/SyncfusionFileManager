@@ -1,0 +1,22 @@
+Mmebers Limitations
+
+As memebers are not paid users so there are some limitation on it, Unlike admin or users.
+
+1:Memebers can view all modules data
+2:memebers can download or view 10 reports of each module per month
+3: memebers can only create Case (limits 10) , Task(limits 10), INCIDENT, Audit checklist,Audit checkpoints, Upload Documents(Limit 10 per month),view documents(Limit 10 per month), downloads documents(Limit 10 per month), can be Reviewer of workflow (limits 10 per month)  or approve a workflow (limits 10 per month).
+
+4: all things mentioned in point 3, they can edit and delete the things which they have created.
+
+Note: If memebers exceeds there limit and want to create an 11th entry it will be cost of 50cents for each operation, if company has balance in their iComplaince Account and admin gives them permissions to memebers that he can create 11th one but if admin did'nt give them permission then memebrs will not able to create 11th entry. if 11th entry is created then 1 dollar will be deducted from company balance. 
+
+for company balance. Admin has rights to add balance through stripe from icompliance to use the system more efficiently for members.
+
+
+
+How we can create the members: 
+
+there are 2 ways to add members:
+1: when employee is added then members is automatically added. and admin can see the list of members in dashboard-> administration . he can deactivate the members as well.
+
+2: members can add himself through signup , if he added himself then admin have to approve that members from same dashboard -> adminstration -> members list ->Action button-> activate

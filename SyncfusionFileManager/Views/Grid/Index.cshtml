@@ -1,0 +1,118 @@
+﻿<div class="control-section">
+    <div class="content-wrapper">
+        <div id="Grid">
+
+        </div>
+    </div>
+</div>
+
+<button type="button" class="btn btn-primary" onclick="showGrid()">show Grid</button>
+<button type="button" class="btn btn-primary" onclick="showdata1()">show Data</button>
+<button type="button" class="btn btn-primary" onclick="showSelectedRow()">show Selected Row</button>
+<button type="button" class="btn btn-primary" onclick="unSelectRows()">Un Select All</button>
+
+<script>
+    ej.base.enableRipple(true);
+
+    function showGrid() {
+
+        var CtrlData = {
+            text: 'Name',
+            id: 'text_12',
+            value: 'asd',
+            toolBoxName: 'text',
+            IDVmData: 18,
+            IDtypemData: 5,
+            IDtoolBox: 1,
+            columns: [{ text: "Name", id: 'text_1', IDVmData: 1, toolBoxName: 'text', IDtypemData: 2, IDtoolBox: 1 },
+            { text: "Surname", id: 'text_2', IDVmData: 2, toolBoxName: 'text', IDtypemData: 2, IDtoolBox: 1 },
+            { text: "email", id: 'text_19', IDVmData: 19, toolBoxName: 'numericedit', IDtypemData: 2, IDtoolBox: 1 }]
+        };
+        var ParantElement = document.getElementById('Grid');
+
+        var gridContainer = document.createElement('div');
+        gridContainer.id = `grid_${CtrlData.text}`;
+        gridContainer.className = `saveModalItemsGrid`;
+        ParantElement.appendChild(gridContainer);
+        var columns = CtrlData.columns;
+
+        gridColumns = [];
+        gridColumns.push({ field: 'Index', headerText: 'Index', visible: false, isPrimaryKey: true });
+
+        columns.forEach(function (col, index) {
+            var editType = "text";
+
+            gridColumns.push({ field: col.text, headerText: col.text, editType: editType });
+        });
+        gridColumns.push({
+            headerText: 'Actions', width: 120,
+            commands: [
+                { type: 'Edit', buttonOption: { cssClass: 'e-flat', iconCss: 'e-edit e-icons' } },
+                { type: 'Delete', buttonOption: { cssClass: 'e-flat', iconCss: 'e-delete e-icons' } },
+                { type: 'Save', buttonOption: { cssClass: 'e-flat', iconCss: 'e-update e-icons' } },
+                { type: 'Cancel', buttonOption: { cssClass: 'e-flat', iconCss: 'e-cancel-icon e-icons' } }
+            ]
+        });
+
+        // we add this (args.cancel = true;) for most action event triggered to stop default action funcationality
+        // because default event add new empty row before the action functionality for the current row performs
+        // when new record added row is showing
+        var grid = new ej.grids.Grid({
+            dataSource: [],
+            height:400,
+            editSettings: {
+                allowAdding: true,
+                allowEditing: true,
+                allowDeleting: true,
+                showAddNewRow: true,
+                mode: "Normal",
+                newRowPosition: 'Bottom'
+            },
+            columns: gridColumns,
+            enableAutoSaveOnSelectionChange: false,
+            commandClick: function (args) {
+                if (args.commandColumn.type == "Edit") {
+                    args.cancel = true;
+                    this.startEdit();
+                }
+                if (args.commandColumn.type == "Delete") {
+                    args.cancel = true;
+                    if (this.getSelectedRows().length > 0)
+                        this.deleteRecord(args.rowData);
+                    else {
+                        this.selectRows = args.rowData.Index; // sometime selected row null soo first select the row which delete button is clicked
+                        this.deleteRecord("Index", args.rowData);
+                    }
+                }
+            },
+            actionBegin: function (args) {
+                if (args.requestType === 'save') {
+                    if (args.action == "edit") {
+                        args.cancel = true; // stop edit action because default event add empty row before update the current row when new record added row is showing
+                        this.updateRow(args.data.Index, args.data);//index and data
+                    }
+                    if (args.action == "add") {
+                        var rows = this.getRows();
+                        args.data.Index = rows.length;
+                        args.index = (this.pageSettings.currentPage * this.pageSettings.pageSize) - 1;
+                    }
+                }
+
+            }
+        });
+        grid.appendTo(gridContainer);
+    }
+    function showdata1() {
+        var grid = document.getElementById("grid_Name").ej2_instances[0];
+        console.log(grid.dataSource);
+    }  
+    function showSelectedRow() {
+        var grid = document.getElementById("grid_Name").ej2_instances[0];
+
+        console.log(grid.getSelectedRecords());
+    } 
+    function unSelectRows() {
+        var grid = document.getElementById("grid_Name").ej2_instances[0];
+        grid.selectionModule.clearRowSelection();
+    }
+</script>

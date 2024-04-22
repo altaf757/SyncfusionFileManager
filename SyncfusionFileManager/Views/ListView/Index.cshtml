@@ -1,0 +1,155 @@
+﻿@{
+    List<object> data = new List<object>();
+    data.Add(new
+    {
+        text = "Code",
+        id = "text18",
+        value = "",
+        toolBoxName = "text",
+        IDVmData = 18,
+        IDtypemData = 2,
+        IDtoolBox = 1,
+    });
+    data.Add(new
+    {
+        text = "Label",
+        id = "text6",
+        value = "",
+        toolBoxName = "text",
+        IDVmData = 6,
+        IDtypemData = 2,
+        IDtoolBox = 1,
+    });
+
+    var template = "<div class=\"row\">" +
+                    "<div class=\"col-sm-4\">" +
+                        "<span class=\"sp_listcode\" data-bs-toggle=\"tooltip\" title=\"${text}\">${text}</span>" +
+                    "</div>" +
+                    //"<div class=\"col-sm-8\">" +
+                        "${createCtrlRowInLeftList(data)}" +
+                    //"</div>" +
+                "</div>";
+}
+<style>
+    #container {
+       min-width: 300px;
+       width: 324px;
+        overflow:auto;
+    }
+
+    .modal-dialog {
+        max-width: 804px !important;
+    }
+    .btnCustom {
+        border: none;
+        border-radius: 15px;
+        background-color: aqua;
+    }
+
+    .sp_listcode {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 100px;
+        display: inline-block;
+    }
+
+    #modal-saveElement-list .e-list-item {
+        height: auto !important;
+    }
+    #modal-saveElement-list input.e-input {
+        height: auto;
+    }
+
+    #modal-saveElement-list .e-control-wrapper, #modal-saveElement-list .inp_listentry1 {
+        margin-top: 0px !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        height: 25px !important;
+        background-color: transparent !important;
+        border: #6b7280 !important;
+        border-style: solid !important;
+        border-width: thin !important;
+        line-height: 0.3rem !important;
+        font-size: 1rem !important;
+    }
+
+    #modal-saveElement-list .e-input-group .e-input-group-icon {
+        min-height: auto;
+        min-width: 20px;
+    }
+    .inp_listentry1{
+        width: 100%;
+    }
+
+    .saveModalValueColumn {
+        overflow-y:auto;
+    }
+    .saveModalItemsTree {
+        border: 1px solid gray;
+    }
+
+    .saveModalItemsTree .e-list-item{
+            padding: 2px !important;
+    }
+  </style>
+   
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <button class="btnCustom" onclick="AddItemInList(1)">integer</button>
+                <button class="btnCustom" onclick="AddItemInList(2)">textbox</button>
+                <button class="btnCustom" onclick="AddItemInList(4)">datetime</button>
+                <button class="btnCustom" onclick="AddItemInList(5)">grid</button>
+                <button class="btnCustom" onclick="AddItemInList(6)">decimal</button>
+                <button class="btnCustom" onclick="AddItemInList(7)">float</button>
+                <button class="btnCustom" onclick="AddItemInList(9)">money</button>
+                <button class="btnCustom" onclick="AddItemInList(10)">tinyint</button>
+                <button class="btnCustom" onclick="AddItemInList(11)">image</button>
+                <button class="btnCustom" onclick="AddItemInList(12)">combobox</button>
+                <button class="btnCustom" onclick="AddItemInList(13)">treeview</button>
+
+                <button class="btnCustom" onclick="btnRemoveClick()">Remove</button>
+
+                <div id="container">
+                    <ejs-listview id="modal-saveElement-list" template="@template" select="onSaveElementListItemSelect" dataSource="data"></ejs-listview>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" onclick="showdata()" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function onSaveElementListItemSelect(args) {
+        //var moveItemToMetaDataListBtn = document.getElementById("moveToMetaDataBtn").ej2_instances[0];
+        //moveItemToMetaDataListBtn.disabled = false;
+        //debugger;
+        if (document.getElementById(`#inp_${args.text}`)) {
+            setTimeout(function () {
+                var InpId = '#inp_' + args.text;
+                $(InpId).focus();
+            }, 10);
+        }
+    }
+
+</script>
+
+<script src="~/js/listView.js" asp-append-version="true"></script>

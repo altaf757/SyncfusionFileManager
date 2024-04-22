@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/22.2.5/fluent.css" />
+<script src="https://cdn.syncfusion.com/ej2/18.1.56/dist/ej2.min.js"></script>
+
+@{
+    string[] items = new string[] { "NewFolder", "Delete", "Download", "Rename", "SortBy", "Refresh", "View", "Details" };
+    string[] layout = new string[] { "SortBy", "View", "Refresh", "|", "Paste", "|", "NewFolder", "|", "Details", "|", "SelectAll" };
+    string[] files = new string[] { "NewFolder", "|", "Download", "Share", "Delete", "Edit", "|", "Security", "History", "Details" };
+    string[] folder = new string[] { "NewFolder", "|", "Rename", "Delete", "|", "Security", "Details" };
+}
+
+<button id="element">click</button>
+
+<div class="control-section">
+    <div class="sample-container" style="padding:10px">
+        <!--  Filemanager element declaration -->
+        <ejs-filemanager id="file" created="created" menuOpen="menuOpen" menuClick="menuClick" fileOpen="onBeforeFileOpen">
+            <e-filemanager-ajaxsettings url="/Home/FileOperations"
+                                        downloadUrl="/Home/Download"
+                                        uploadUrl="/Home/Upload"
+                                        getImageUrl="/Home/GetImage">
+            </e-filemanager-ajaxsettings>
+
+            <e-filemanager-toolbarsettings items="items">
+            </e-filemanager-toolbarsettings>
+            <e-filemanager-contextmenusettings file="files" folder="folder" layout="layout">
+            </e-filemanager-contextmenusettings>
+
+            <e-filemanager-navigationpanesettings visible="true"></e-filemanager-navigationpanesettings>
+        </ejs-filemanager>
+    </div>
+</div>
+
+    <script>
+        function created() {
+            var filemanager = document.getElementById("file").ej2_instances[0];
+            filemanager.uploadObj.dropArea = null;
+        }
+        document.getElementById("element").addEventListener('click', function () {
+            var filemanager = document.getElementById("file").ej2_instances[0];
+            var files = filemanager.getSelectedFiles();
+            for (var i = 0; i < files.length; i++) {
+                var path = files[i].filterPath + files[i].name;
+                console.log(path);
+            }
+            console.log('asdf')
+        });
+
+        // Icon added to custom menu item
+        function menuOpen(args) {
+            for (var i = 0; i < args.items.length; i++) {
+                if (args.items[i].id === this.element.id + '_cm_security') {
+                    args.items[i].iconCss = 'e-icons e-fe-tick';
+                }
+                if (args.items[i].id === this.element.id + '_cm_history') {
+                    args.items[i].iconCss = 'e-icons e-fe-tick';
+                }
+                if (args.items[i].id === this.element.id + '_cm_edit') {
+                    args.items[i].iconCss = 'e-icons e-fe-tick';
+                }
+                if (args.items[i].id === this.element.id + '_cm_share') {
+                    args.items[i].iconCss = 'e-icons e-fe-tick';
+                }
+            }
+        }
+
+        // event for custom menu item
+        function menuClick(args) {
+            debugger
+            if (args.item.text === 'Security') {
+                alert('You have clicked custom menu item')
+            }
+        }
+
+        // File Manager's file beforeFileOpen function
+        function onBeforeFileOpen(args) {
+            debugger;
+            args.cancel = true;
+            console.log(args.fileDetails.name + " is opened");
+        }
+    </script>
+    <style>
+        .e-empty-inner-content {
+            display: none;
+        }
+    </style>
