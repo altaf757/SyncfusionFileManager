@@ -1,0 +1,34 @@
+﻿
+@model int;
+
+<div class="modal-header">
+    <h5 class="modal-title">
+        <span>Modal</span>
+    </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<h1>this is partial view modal</h1>
+<p>modal Value is : @Model</p>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary close-button" data-dismiss="modal">Cancel</button>
+    <button type="button" class="btn btn-primary" id="SaveBtn" style="padding: 6px 12px;">Save</button>
+</div>
+
+    <script>
+        $(document).ready(function () {
+            //$('.modal-body1').load('_partialView.html');
+            var _createOrEditModal = new ModalManager({
+                viewUrl: '/PartialView/PartialView',
+                modalClass: 'CreateOrEdit'
+            });
+
+            $('#SaveBtn').click(function () {
+                console.log('asdfasdf');
+                _createOrEditModal.open({ Id: 12 });
+            });
+        });
+    </script>
