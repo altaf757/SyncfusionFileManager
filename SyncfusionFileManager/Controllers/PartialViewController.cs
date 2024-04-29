@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SyncfusionFileManager.Controllers
 {
@@ -9,9 +9,9 @@ namespace SyncfusionFileManager.Controllers
             return View();
         }
 
-        public ActionResult LoadViewWithAjax() 
+        public IActionResult PartialView(int Id=0)
         {
-            return PartialView("_LoadViewWithAjax");
+            return PartialView("_PartialView",Id);
         }
     }
 }
