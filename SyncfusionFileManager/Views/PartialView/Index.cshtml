@@ -1,8 +1,26 @@
-﻿
 
 
-  <button id="Btn_AddSkillSet" type="button" style="height: 36px; width: 36px;">Add
-        </button>
 
-<div class="SkillSetHeaderClass" ></div>
+<h1>Bootstrap Modal Example</h1>
 
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" id="modalShowBtn">
+    Launch demo modal
+</button>
+
+@section Scripts{
+
+<script>
+    $(document).ready(function () {
+        //$('.modal-body1').load('_partialView.html');
+        var _createOrEditModalworkflow = new ModalManager({
+            viewUrl: '/PartialView/PartialView',
+            modalClass: 'CreateOrEditCWorkflowModal'
+        });
+
+        $('#modalShowBtn').click(function () {
+            _createOrEditModalworkflow.open({Id:12});
+        });
+    });
+</script>
+}
