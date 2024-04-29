@@ -58,6 +58,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Grid" asp-action="Index">Grids</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="RichTextEditor" asp-action="Index">RichText Editor</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="PartialView" asp-action="Index">Partial Views</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -100,6 +106,21 @@
 
     </script>
 
+    <script>
+        $(document).on('click', '#Btn_AddSkillSet', function (e) {
+            $.ajax({
+                url: '/PartialView/LoadViewWithAjax',
+                success: function (partialView) {
+                    $('body').append(partialView);
+                }
+            });
+        });
+
+        $(document).on('click', '#Btn_DeleteSkillset', function (e) {
+            $(this).parent().parent().remove();
+        });
+
+    </script>
 
 
 @* 
