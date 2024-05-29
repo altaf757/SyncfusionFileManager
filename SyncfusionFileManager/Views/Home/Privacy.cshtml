@@ -4,3 +4,128 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
+@{
+  
+}
+
+<script>
+    function ajaxSaveFormularTemplate(doClose) {
+        //TODO moram se pozanimat, kako je s potrjevanjem oz. save form template.
+        let formData = new FormData();
+        formData.append("_target", "saveFormTemplate");
+        let docData = {};
+        let dataTask = {};
+        //docData.sys24='';
+        //docData.sys15='';
+        docData.fld_SYfile = '';
+        docData.IDVmData6 = document.getElementById('TxtFormName').value;
+        docData.fld_posType = 0;
+        docData.fld_strut = '';
+        docData.fld_dupli = '';
+
+        // Item status
+        let fields = document.getElementsByName("rbTaskStatus");
+        let isApproved = null;
+
+        if (fields[0].checked) {
+            isApproved = "0";
+        }
+        else {
+            isApproved = "1";
+        }
+        docData.fld_taskStatus = isApproved;
+        let formBody = _sfRtFormularContent.GetHTML();
+        formBody = formBody.replace(/\n|\t/g, ' '); //removes new lines
+        formBody = formBody.replace(/>\s+</gm, '><'); //removes blanks between tags
+
+        //This "encrypting" is needed to send html to server.
+        formBody = formBody.replaceAll("<", "#||#");
+
+        formData.append("templateBody", formBody);
+        docData.IDVmData15 = "templateBody";
+
+        // okno workflow
+        // Current workflow
+        let IDVwfl = document.getElementById("DdlWFItemList").value;
+        // alert("IDVwfl " + IDVwfl);
+        docData.fld_IDVwfl = IDVwfl;
+
+        // Selected Performer
+        dataTask.sys6 = document.getElementById("DdlPerformer").value;
+
+        // Planned End Date
+        let _dt = document.getElementById("DateAPFinishP_text").value;
+        let _select = parent.document.getElementById('appDateFormat');
+        let formatter = _select.options[_select.selectedIndex].text;
+        let formatTokens = formatter.split(".");
+
+        let idx_d = 0;
+        let idx_m = 0;
+        let idx_y = 0;
+        for (let i = 0; i < formatTokens.length; i++) {
+            let tokenElement = formatTokens[i];
+
+            if (tokenElement == "yyyy") {
+                idx_y = i;
+            }
+            else if (tokenElement == "MM") {
+                idx_m = i;
+            }
+            else if (tokenElement = "dd") {
+                idx_d = i;
+            }
+        }
+        let dateTokens = _dt.split(".");
+        dataTask.sys7 = dateTokens[idx_y] + "." + dateTokens[idx_m] + "." + dateTokens[idx_d];
+
+        let output = "";
+        for (let prop in docData) {
+            if (Object.prototype.hasOwnProperty.call(docData, prop)) {
+                if (typeof docData[prop] == 'object') {
+                    let _obj = docData[prop];
+                    output = output + prop + ': ' + _obj?.name + "\n";
+                }
+                else
+                    output = output + prop + ': ' + docData[prop] + "\n";
+            }
+        }
+        output = output + "----------------------------------------------------\n";
+
+        for (let prop in dataTask) {
+            if (Object.prototype.hasOwnProperty.call(dataTask, prop)) {
+                output = output + prop + ': ' + dataTask[prop] + "\n";
+            }
+        }
+
+        // if(!confirm(output)){
+        //     return;
+        // }
+        let settingsData = JSON.stringify(docData);
+        formData.append("dataDocItem", settingsData);
+        formData.append("dataTask", JSON.stringify(dataTask));
+        /////////////////////////////////////////////////////////////////////
+        let options = {};
+        options.url = "saveFile.aspx";
+        options.type = "POST";
+        options.data = formData;
+        options.contentType = false;
+        options.processData = false;
+        options.success = function (result) {
+            let tst = 0;
+            let resObj = JSON.parse(result);
+
+            if (!doClose) {
+                let btnClose = document.getElementById('closeFormularTmpBtn');
+                if (btnClose.value != 'Close') {
+                    btnClose.value = 'Close';
+                }
+            }
+
+            window.top.hideWinItem(resObj.status, resObj.doTask, resObj.selectedNode,
+                resObj.newIDVitem, resObj.action, doClose/*taskStatus==1*/);
+        }
+        options.error = function (err) { alert(err.statusText); };
+        $.ajax(options);
+    }
+
+</script>

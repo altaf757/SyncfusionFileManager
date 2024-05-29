@@ -5,9 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.3" />
+    <PackageReference Include="itext7.pdfhtml" Version="5.0.3" />
+    <PackageReference Include="MimeKit" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="19.2.0.57" />
     <PackageReference Include="Syncfusion.Licensing" Version="22.2.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\templates\" />
   </ItemGroup>
 
 </Project>

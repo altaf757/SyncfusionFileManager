@@ -21,6 +21,12 @@ function getSelectedLevel() {
     return mode;
 }
 
+
+function pmwclkopenDialogNew() {
+    var grid = document.getElementById("datagrid-index1").ej2_instances[0];
+    grid.selectionModule.clearRowSelection();
+    pmwclkopenDialog();
+}
 //bago
 function pmwclkopenDialog() {
 
@@ -47,6 +53,7 @@ function pmwclkopenDialog() {
                 $("#pmwbodyDialog").resizable({ handleSelector: ".win-size-grip" });
             }
             if (result == 'Lost') {
+
                 const targetEl = document.getElementById('toolbarnewModal');
                 document.getElementById('modalHeaderTitle').innerHTML = "Lost";
                 const modal = new Modal(targetEl);
@@ -55,6 +62,7 @@ function pmwclkopenDialog() {
                 $("#pmwbodyDialog").resizable({ handleSelector: ".win-size-grip" });
             }
             if (result == 'main') {
+
                 const targetEl = document.getElementById('toolbarnewModal');
                 document.getElementById('modalHeaderTitle').innerHTML = "PMW Group";
                 const modal = new Modal(targetEl);
@@ -114,34 +122,7 @@ function pmwclkopenDialog() {
 function pmwclkopenDialogEdit() {
 
     var selectedNode = $("#treedata_active").attr("data-uid");
-    if (selectedNode == 1) {
-        var grid = document.getElementById("datagrid-index1").ej2_instances[0];
-        var selectedRecords = grid.getSelectedRecords();
-        var rows = JSON.stringify(selectedRecords);
-        console.log(selectedRecords.length);
-        if (selectedRecords.length > 1) {
-            alert('Please select 1 item only to edit.');
-        } else if (selectedRecords.length = 1) {
-            var listView1 = document.getElementById("modal-saveElement-list").ej2_instances[0];
-            var listView2 = document.getElementById("modal-metaData-list").ej2_instances[0];
-            $.ajax({
-                type: "GET",
-                url: "/Home/GetMetadataList",
-                data: { SelectedID: rows },
-                dataType: "json",
-                success: function (result) {
-                    listView1.dataSource = result[0];
-                    listView2.dataSource = result[1];
-                    /*secondInput*/
 
-                    pmwclkopenDialog();
-                },
-                error: function (result) {
-                    alert('Oh no :(');
-                }
-            });
-        }
-    }
 
     if (selectedNode == 18) {
         var grid = document.getElementById("datagrid-index1").ej2_instances[0];
@@ -170,7 +151,7 @@ function pmwclkopenDialogEdit() {
             });
         }
     }
-    if (selectedNode == 25) {
+    else if (selectedNode == 25) {
         var grid = document.getElementById("datagrid-index1").ej2_instances[0];
         var selectedRecords = grid.getSelectedRecords();
         var rows = JSON.stringify(selectedRecords);
@@ -206,7 +187,36 @@ function pmwclkopenDialogEdit() {
             });
         }
     }
-
+    else {
+        var grid = document.getElementById("datagrid-index1").ej2_instances[0];
+        var selectedRecords = grid.getSelectedRecords();
+        var rows = JSON.stringify(selectedRecords);
+        if (selectedRecords.length = 1) {
+            var listView1 = document.getElementById("modal-saveElement-list").ej2_instances[0];
+            var listView2 = document.getElementById("modal-metaData-list").ej2_instances[0];
+            $.ajax({
+                type: "GET",
+                url: "/Home/GetMetadataList",
+                data: { SelectedID: rows },
+                dataType: "json",
+                success: function (result) {
+                    listView1.dataSource = result[0];
+                    listView2.dataSource = result[1];
+                    /*secondInput*/
+                    debugger;
+                    modalSaveElementListData = result[0];
+                    modalMetaDataNameListData = result[1];
+                    pmwclkopenDialog();
+                },
+                error: function (result) {
+                    alert('Oh no :(');
+                }
+            });
+        }
+        else {
+            alert('Please select 1 item to edit.');
+        }
+    }
 }
 
 
@@ -258,8 +268,8 @@ function onChange(args) {
 
     //var dropObject = document.getElementById("combfilter1").ej2_instances[0];
 
-   // console.log(dropObject.value);
-   // dropObject.value = null;
+    // console.log(dropObject.value);
+    // dropObject.value = null;
 }
 
 function onChange2(args) {
@@ -293,7 +303,7 @@ function onNodeExpanding(args) {
             dataType: 'json',
             success: function (result) {
                 var treeInstance = document.getElementById("treedata").ej2_instances[0];
-               
+
                 treeInstance.addNodes(result, PID);
                 treeInstance.ensureVisible(PID);
 
@@ -791,13 +801,16 @@ function postNewItemWorkflow() {
 
 function saveItemPMW() {
 
-    var items = document.getElementById("modal-saveElement-list").getElementsByTagName("li");
+    // selected node id of tree
+    var selectedNode = $("#treedata_active").attr("data-uid");
+
+
+    // get the selected item of grid to edit that item or null to create new items
     var grid = document.getElementById("datagrid-index1").ej2_instances[0];
     var selectedRecords = grid.getSelectedRecords();
 
+    //if null create mode else edit mode
     var rows = JSON.stringify(selectedRecords);
-
-
 
     // settings modal settings tab form data
     //code to apply on children
@@ -807,41 +820,41 @@ function saveItemPMW() {
     // is Folder checkbox value
     var SYfile = document.getElementById("CbSYfileFormular").checked;
     //children type checked radio button value
-    var posType =$('input[name="RbAddItemCType"]:checked').val();
+    var posType = $('input[name="RbAddItemCType"]:checked').val();
 
     //settings modal structure tab form data
-    
-     var fld_incl_parent_struct= document.getElementById('fld_incl_parant_struct').checked?1:0;
-     var fld_incl_children_struct= document.getElementById('fld_incl_children_struct').checked?1:0;
-     var structTreeInstance = document.getElementById("treedata_Settings").ej2_instances[0];
+
+    var fld_incl_parent_struct = document.getElementById('fld_incl_parant_struct').checked ? 1 : 0;
+    var fld_incl_children_struct = document.getElementById('fld_incl_children_struct').checked ? 1 : 0;
+    var structTreeInstance = document.getElementById("treedata_Settings").ej2_instances[0];
     var structTreeItems = ""
     var structTreeNodes = structTreeInstance.checkedNodes;
     debugger;
-    if(structTreeNodes) {
-        for(var _i=0;_i<structTreeNodes.length;_i++) {
-            structTreeItems = structTreeItems + structTreeNodes[_i] + "|";                                         
+    if (structTreeNodes) {
+        for (var _i = 0; _i < structTreeNodes.length; _i++) {
+            structTreeItems = structTreeItems + structTreeNodes[_i] + "|";
         }
     }
-                
-    
+
+
     //settings modal deplicate tab form data
-    let fld_incl_parent_dupli= document.getElementById('fld_incl_parent_dupli').checked?1:0;
-    let fld_incl_children_dupli= document.getElementById('fld_incl_children_dupli').checked?1:0;
+    let fld_incl_parent_dupli = document.getElementById('fld_incl_parent_dupli').checked ? 1 : 0;
+    let fld_incl_children_dupli = document.getElementById('fld_incl_children_dupli').checked ? 1 : 0;
     var dupliTreeInstance = document.getElementById("dupl_treedata_Settings").ej2_instances[0];
     var dupliTreeItems = "";
     dupliTreeNodes = dupliTreeInstance.checkedNodes;
     if (dupliTreeNodes) {
-        for(var _i=0;_i<dupliTreeNodes.length;_i++) {
-            dupliTreeItems = dupliTreeItems + dupliTreeNodes[_i] + "|";                                         
+        for (var _i = 0; _i < dupliTreeNodes.length; _i++) {
+            dupliTreeItems = dupliTreeItems + dupliTreeNodes[_i] + "|";
         }
     }
 
-    
+
     //workflow modal form data
     var IDVwfl = document.getElementById("ddtb-currentworkflow").ej2_instances[0].value;
-     if (IDVwfl == null)
+    if (IDVwfl == null)
         IDVwfl = "";
-    var taskStatus =$('input[name="tb-itemstatus"]:checked').val();
+    var taskStatus = $('input[name="tb-itemstatus"]:checked').val();
 
     let dataValues = {};
     dataValues.sys24 = codeSet;
@@ -862,7 +875,7 @@ function saveItemPMW() {
 
     //var strobj = "{	'sys24':'" + codeSet + "','sys15':'" + useFormular + "','fld_SYfile':'" + (SYfile ? 1 : 0) + "','fld_posType':'" + posType + "','sys33':'','sys34':'','fld_IDVwfl': '" + IDVwfl + "', 'fld_taskStatus': '" + taskStatus + "', 'fld_incl_parent_struct': '" + fld_incl_parent_struct + "', 'fld_incl_children_struct': '" + fld_incl_children_struct +
     //"','fld_incl_parent_dupli':'" + fld_incl_parent_dupli + "','fld_incl_children_dupli':'" + fld_incl_children_dupli + "','fld_strut':'" + structTreeItems + "','fld_dupli':'" + dupliTreeItems + "',";
-    
+
     //var strval = "";
     //for (i = 0; i < items.length; i++) {
     //    var id = items[i].id;
@@ -873,97 +886,100 @@ function saveItemPMW() {
     //}
     //strobj += strval + "}";
 
-    var saveListObj = document.getElementById("modal-saveElement-list").ej2_instances[0];
-    var ListItems = moveItemToMetaDataListBtn.dataSource;
+    var saveElementListObj = document.getElementById("modal-saveElement-list").ej2_instances[0];
+    var ListItems = saveElementListObj.dataSource;
 
     if (ListItems) {
         ListItems.forEach(function (item) {
 
-            let _val = "";
-            let _key = 'txt' + item.IDVmData;
+            if (item.IDVmData) {
 
-            if (item.IDtoolBox == "6") { // Combobox
-                var inputId = `cmb_${item.text.replace(/\s+/g, '')}`;
-                var instance = document.getElementById(inputId).ej2_instances[0];
-                _val = instance.value;
-            }
-            else {
-                switch (item.IDtypemData) {
-                    case 1:
-                    case 6:
-                    case 7:
-                    case 9:
-                    case 10: {
-                        // all number type textbox value
-                        var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId).ej2_instances[0];
-                        _val = instance.value;
-                        break;
-                    }
-                    case 2:
-                    case 3: {
-                        // all simple textbox
-                        var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId).ej2_instances[0];
-                        _val = instance.value;
-                        break;
-                    }
-                    case 4: {
-                        // DatePicker value
-                        var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId).ej2_instances[0];
-                        _val = instance.element.value;
-                        break;
-                    }
-                    case 5: {//Grid
-                        _key = 'grid_table' + item.IDVmData;
-                        var inputId = `grid_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId).ej2_instances[0];
-                        if (instance) {
-                            var GridItems = instance.dataSource;
-                            debugger;
-                            _val = "grid_" + item.IDVmData;
-                        }
-                        break;
-                    }
-                    case 11: { //file inputs
-                        var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId);
-                        if (instance && instance.files.length > 0) {
-                            _val = instance.files[0].name;
-                            data.append(_key + "_file", instance.files[0]);
-                        }
-                        break;
-                    }
-                    case 12: { // items
-                        switch (item.IDtoolBox) {
-                            case 6: {
-                                break;
-                            }
-                            case 8: {
-                                var inputId = `tree_${item.text.replace(/\s+/g, '')}`;
-                                var instance = document.getElementById(inputId).ej2_instances[0];
+                let _val = "";
+                let _key = 'txt' + item.IDVmData;
 
-                                let cNodes = instance.selectedNodes;
-                                debugger;
-                                if (cNodes != null) {
-                                    _val = cNodes[0];
-                                }
-                                break;
-                            }
-                            case 9: {
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                    case 13: {
-                        //_val = mdCtrl.innerHTML;
-                    }
+                if (item.IDtoolBox == "6") { // Combobox
+                    var inputId = `cmb_${item.text.replace(/\s+/g, '')}`;
+                    var instance = document.getElementById(inputId).ej2_instances[0];
+                    _val = instance.value;
                 }
+                else {
+                    switch (parseInt(item.IDtypemData)) {
+                        case 1:
+                        case 6:
+                        case 7:
+                        case 9:
+                        case 10: {
+                            // all number type textbox value
+                            var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
+                            var instance = document.getElementById(inputId).ej2_instances[0];
+                            _val = instance.value;
+                            break;
+                        }
+                        case 2:
+                        case 3: {
+                            // all simple textbox
+                            var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
+                            var instance = document.getElementById(inputId).ej2_instances[0];
+                            _val = instance.value;
+                            break;
+                        }
+                        case 4: {
+                            // DatePicker value
+                            var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
+                            var instance = document.getElementById(inputId).ej2_instances[0];
+                            _val = instance.element.value;
+                            break;
+                        }
+                        case 5: {//Grid
+                            _key = 'grid_table' + item.IDVmData;
+                            var inputId = `grid_${item.text.replace(/\s+/g, '')}`;
+                            var instance = document.getElementById(inputId).ej2_instances[0];
+                            if (instance) {
+                                var GridItems = instance.dataSource;
+                                debugger;
+                                _val = "grid_" + item.IDVmData;
+                            }
+                            break;
+                        }
+                        case 11: { //file inputs
+                            var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
+                            var instance = document.getElementById(inputId);
+                            if (instance && instance.files.length > 0) {
+                                _val = instance.files[0].name;
+                                data.append(_key + "_file", instance.files[0]);
+                            }
+                            break;
+                        }
+                        case 12: { // items
+                            switch (item.IDtoolBox) {
+                                case 6: {
+                                    break;
+                                }
+                                case 8: {
+                                    var inputId = `tree_${item.text.replace(/\s+/g, '')}`;
+                                    var instance = document.getElementById(inputId).ej2_instances[0];
 
+                                    let cNodes = instance.selectedNodes;
+                                    debugger;
+                                    if (cNodes != null) {
+                                        _val = cNodes[0];
+                                    }
+                                    break;
+                                }
+                                case 9: {
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        case 13: {
+                            //_val = mdCtrl.innerHTML;
+                        }
+                    }
+
+                }
+                dataValues[_key] = _val;
             }
-            dataValues[_key] = _val;
         });
     }
 
@@ -977,12 +993,13 @@ function saveItemPMW() {
     var d = new Date(plannedDate);
     var sys7 = d.getFullYear() + "." + (d.getMonth() + 1) + "." + d.getDate();
 
+    var strobj = JSON.stringify(dataValues);
     var strDataTask = '{ "sys6": "' + selectedperformer + '", "sys7": "' + sys7 + '" }';
     debugger;
     $.ajax({
         type: "PUT",
-        url: "/Home/EditItemWorkflow",
-        data: { id: strobj, dataTask: strDataTask, selectedItem: rows },
+        url: "/Home/CreateOrEditItemWorkflow",
+        data: { data: strobj, dataTask: strDataTask, SelectedNode: selectedNode, selectedItem: rows },
         dataType: "json",
         success: function (result) {
             console.log(result);
@@ -1097,39 +1114,64 @@ function closeEForms() {
 
 function postNewFormsWorkflow() {
 
-    var selectedperformer = document.getElementById('ddtb-SelectedPerform').ej2_instances[0];
-    var IDVwfl = document.getElementById("ddtb-currentworkflow").ej2_instances[0];
-    var IDVmData6 = $("#inp-eformsCap").val();
-    var rteFormsObj = document.getElementById("iframe-eforms").ej2_instances[0];
-    var ele = document.getElementsByName('tb-itemstatus');
-    var isApproved;
+
+    // selected node id of tree
+    var selectedNode = $("#treedata_active").attr("data-uid");
+
+
+    // get the selected item of grid to edit that item or null to create new items
     var grid = document.getElementById("datagrid-index1").ej2_instances[0];
     var selectedRecords = grid.getSelectedRecords();
+
+    //if null create mode else edit mode
     var rows = JSON.stringify(selectedRecords);
 
-    for (i = 0; i < ele.length; i++) {
-        if (ele[i].checked)
-            isApproved = ele[i].value;
-    }
+
+    let docData = {};
+    docData.fld_SYfile = '';
+    docData.IDVmData6 = $("#inp-eformsCap").val();
+    docData.fld_posType = 0;
+
+    //workflow modal form data
+    var IDVwfl = document.getElementById("ddtb-currentworkflow").ej2_instances[0].value;
+    if (IDVwfl == null)
+        IDVwfl = "";
+    var taskStatus = $('input[name="tb-itemstatus"]:checked').val();
+
+    docData.fld_taskStatus = taskStatus;
+    docData.fld_IDVwfl = IDVwfl.value;
 
 
-    var strobj = "{'fld_SYfile':'','IDVmData6':'" + IDVmData6 + "','fld_posType':0,'sys33':'','sys34':'','fld_taskStatus':'" + isApproved + "','IDVmData15':'templateBody','fld_IDVwfl':'" + IDVwfl.value + "'}";
+    docData.IDVmData15 = 'templateBody';
+    docData.sys33 ='';
+    docData.sys34 = '';
+
+    docData.fld_strut = '';
+    docData.fld_dupli = '';
+
+
+    var templateBody = document.getElementById("iframe-eforms").ej2_instances[0];
+
+    //task related Data
+    var selectedperformer = document.getElementById('ddtb-SelectedPerform').ej2_instances[0].value;
+    if (selectedperformer == null)
+        selectedperformer = "";
 
     //ddtb-planedenddate
-    var plannedDate = document.getElementById("ddtb-planedenddate").ej2_instances[0];
-    var d = new Date(plannedDate.value);
+    var plannedDate = document.getElementById("ddtb-planedenddate").ej2_instances[0].value;
+    var d = new Date(plannedDate);
     var sys7 = d.getFullYear() + "." + (d.getMonth() + 1) + "." + d.getDate();
 
-    var strDataTask = '{ "sys6": "' + selectedperformer.value + '", "sys7": "' + sys7 + '" }';
+    var strDataTask = '{ "sys6": "' + selectedperformer + '", "sys7": "' + sys7 + '" }';
+    var strobj = JSON.stringify(docData);
 
     $.ajax({
         type: "POST",
         url: "/Home/NewFormsWorkflow",
-        data: { id: strobj, dataTask: strDataTask, templateBody: rteFormsObj.value, selectedItem: rows },
+        data: { dataDocItem: strobj, dataTask: strDataTask, templateBody: templateBody.value, selectedItem: rows },
         dataType: "json",
         success: function (result) {
-            location.reload();
-            if (result.IsSuccessful) {
+            if (result.status) {
                 location.reload();
             }
         },
@@ -1543,10 +1585,10 @@ function submitMetadata_grp() {
             debugger
             if (data.IsSuccessful) {
                 location.reload();
-                
+
 
             }
-               /* $("#dvmain-codesystem").addClass("hidden");*/
+            /* $("#dvmain-codesystem").addClass("hidden");*/
             else {
 
             }
@@ -1766,8 +1808,7 @@ function selectedMenu(args) {
         || args.item.id === "menu_Activate"
         || args.item.id === "menu_Export"
         || args.item.id === "menu_Send"
-        || args.item.id === "menu_Print")
-    {
+        || args.item.id === "menu_Print") {
         OpenCommingSoonWindow();
     }
     if (args.item.id === "menu_Logout") {
@@ -1960,60 +2001,60 @@ function createCtrlRowInLeftList(CtrlData) {
     ParantElement.className = 'col-sm-8';
 
     var ctrl = '';
-        if (CtrlData.IDtypemData == 1) {// integer
-            ctrl = createInteger(ParantElement, CtrlData);
-        }
-        else if (CtrlData.IDtypemData == 2) { // nvarchar
+    if (CtrlData.IDtypemData == 1) {// integer
+        ctrl = createInteger(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 2) { // nvarchar
+        ctrl = createTextBox(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 3) { // nvarchar(max)
+        ctrl = createTextBox(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 4) { //datetime
+        ctrl = createDateBox(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 5) { // grid
+        ctrl = createGrid(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 6) { // decimal
+        ctrl = createDec(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 7) { // float
+        ctrl = createFlo(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 8) { // xml
+
+    }
+    else if (CtrlData.IDtypemData == 9) { // money
+        ctrl = createMoney(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 10) { // tinyint, range -255 to 255
+        ctrl = createTinyInt(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 11) { // image
+        ctrl = createFileUpload(ParantElement, CtrlData);
+    }
+    else if (CtrlData.IDtypemData == 12) { // item
+        if (CtrlData.IDtoolBox == 1) {
+            // textbox
             ctrl = createTextBox(ParantElement, CtrlData);
         }
-        else if (CtrlData.IDtypemData == 3) { // nvarchar(max)
-            ctrl = createTextBox(ParantElement, CtrlData);
+        else if (CtrlData.IDtoolBox == 6) {
+            // combobox
+            ctrl = createCombobox(ParantElement, CtrlData);
         }
-        else if (CtrlData.IDtypemData == 4) { //datetime
-            ctrl = createDateBox(ParantElement, CtrlData);
+        else if (CtrlData.IDtoolBox == 8) {
+            // treeview
+            ctrl = createTreeDiv(ParantElement, CtrlData);
         }
-        else if (CtrlData.IDtypemData == 5) { // grid
-            ctrl = createGrid(ParantElement, CtrlData);
-        }
-        else if (CtrlData.IDtypemData == 6) { // decimal
-            ctrl = createDec(ParantElement, CtrlData);
-        }
-        else if (CtrlData.IDtypemData == 7) { // float
-            ctrl = createFlo(ParantElement, CtrlData);
-        }
-        else if (CtrlData.IDtypemData == 8) { // xml
+        //else if (CtrlData.IDtoolBox == 9) {
+        //    // listbox , we don't have listbox in database yet
+        //    ctrl =  createListbox(ParantElement, CtrlData);
+        //}
+    }
+    else if (CtrlData.IDtypemData == 13) { // calculated
 
-        }
-        else if (CtrlData.IDtypemData == 9) { // money
-            ctrl = createMoney(ParantElement, CtrlData);
-        }
-        else if (CtrlData.IDtypemData == 10) { // tinyint, range -255 to 255
-            ctrl = createTinyInt(ParantElement, CtrlData);
-        }
-        else if (CtrlData.IDtypemData == 11) { // image
-            ctrl = createFileUpload(ParantElement, CtrlData);
-        }
-        else if (CtrlData.IDtypemData == 12) { // item
-            if (CtrlData.IDtoolBox == 1) {
-                // textbox
-                ctrl = createTextBox(ParantElement, CtrlData);
-            }
-            else if (CtrlData.IDtoolBox == 6) {
-                // combobox
-                ctrl = createCombobox(ParantElement, CtrlData);
-            }
-            else if (CtrlData.IDtoolBox == 8) {
-                // treeview
-                ctrl = createTreeDiv(ParantElement, CtrlData);
-            }
-            //else if (CtrlData.IDtoolBox == 9) {
-            //    // listbox , we don't have listbox in database yet
-            //    ctrl =  createListbox(ParantElement, CtrlData);
-            //}
-        }
-        else if (CtrlData.IDtypemData == 13) { // calculated
-
-        }
+    }
 
     return ctrl;
 }
@@ -2027,6 +2068,7 @@ function createInteger(ParantElement, CtrlData) {
             max: 2147483647,
             decimals: 0,
             format: 'n0',
+            value: `${CtrlData.value}`
         });
 
         var input = document.createElement('input');
@@ -2056,6 +2098,7 @@ function createTextBox(ParantElement, CtrlData) {
 
 
         var TextBox = new ej.inputs.TextBox({
+            value: `${CtrlData.value}`
         });
         setTimeout(function () {
             TextBox.appendTo("#" + input.id);
@@ -2073,6 +2116,7 @@ function createTinyInt(ParantElement, CtrlData) {
             max: 255,
             decimals: 0,
             format: 'n0',
+            value: `${CtrlData.value}`
         });
 
         var inputElement = document.createElement('input');
@@ -2136,6 +2180,7 @@ function createDec(ParantElement, CtrlData) {
             max: 999999999999999998,
             decimals: 9,
             format: 'n3',
+            value: `${CtrlData.value}`
         });
 
         var input = document.createElement('input');
@@ -2160,6 +2205,7 @@ function createFlo(ParantElement, CtrlData) {
         var FloInput = new ej.inputs.NumericTextBox({
             decimals: 9,
             format: 'n3',
+            value: `${CtrlData.value}`
         });
 
         var input = document.createElement('input');
@@ -2186,6 +2232,7 @@ function createMoney(ParantElement, CtrlData) {
             max: 999999999999999998,
             decimals: 4,
             format: 'c4',
+            value: `${CtrlData.value}`
         });
 
         var input = document.createElement('input');
@@ -2231,7 +2278,7 @@ function createTreeDiv(ParantElement, CtrlData) {
                 text: "COtree",
                 // iconCss: "icon",
                 // imageURL: "image",
-                // selected: "Selected",
+                selected: "Selected",
                 // child: 'nodeChild'
             }
         });
@@ -2370,106 +2417,6 @@ function createCombobox(ParantElement, CtrlData) {
     return ParantElement.outerHTML;
 }
 
-
-function showdata() {
-    var moveItemToMetaDataListBtn = document.getElementById("modal-saveElement-list").ej2_instances[0];
-    //console.log(moveItemToMetaDataListBtn.dataSource);
-    var ListItems = moveItemToMetaDataListBtn.dataSource;
-
-    let dataValues = {};
-    if (ListItems) {
-        ListItems.forEach(function (item) {
-
-            let _val = "";
-            let _key = 'txt' + item.IDVmData;
-
-            if (item.IDtoolBox == "6") { // Combobox
-                var inputId = `cmb_${item.text.replace(/\s+/g, '')}`;
-                var instance = document.getElementById(inputId).ej2_instances[0];
-                _val = instance.value;
-            }
-            else {
-                switch (item.IDtypemData) {
-                    case 1:
-                    case 6:
-                    case 7:
-                    case 9:
-                    case 10: {
-                        // all number type textbox value
-                        var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId).ej2_instances[0];
-                        _val = instance.value;
-                        break;
-                    }
-                    case 2:
-                    case 3: {
-                        // all simple textbox
-                        var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId).ej2_instances[0];
-                        _val = instance.value;
-                        break;
-                    }
-                    case 4: {
-                        // DatePicker value
-                        var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId).ej2_instances[0];
-                        _val = instance.element.value;
-                        break;
-                    }
-                    case 5: {//Grid
-                        _key = 'grid_table' + item.IDVmData;
-                        var inputId = `grid_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId).ej2_instances[0];
-                        if (instance) {
-                            var GridItems = instance.dataSource;
-                            debugger;
-                            _val = "grid_" + item.IDVmData;
-                        }
-                        break;
-                    }
-                    case 11: { //file inputs
-                        var inputId = `inp_${item.text.replace(/\s+/g, '')}`;
-                        var instance = document.getElementById(inputId);
-                        if (instance && instance.files.length > 0) {
-                            _val = instance.files[0].name;
-                            data.append(_key + "_file", instance.files[0]);
-                        }
-                        break;
-                    }
-                    case 12: { // items
-                        switch (item.IDtoolBox) {
-                            case 6: {
-                                break;
-                            }
-                            case 8: {
-                                var inputId = `tree_${item.text.replace(/\s+/g, '')}`;
-                                var instance = document.getElementById(inputId).ej2_instances[0];
-
-                                let cNodes = instance.selectedNodes;
-                                debugger;
-                                if (cNodes != null) {
-                                    _val = cNodes[0];
-                                }
-                                break;
-                            }
-                            case 9: {
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                    case 13: {
-                        //_val = mdCtrl.innerHTML;
-                    }
-                }
-
-                dataValues[_key] = _val;
-            }
-        });
-    }
-
-    console.log(dataValues);
-}
 //Onload
 //(function () {
 //    //Syncfusion change languange

@@ -13,7 +13,118 @@
     .e-icons.e-emoji:before {
         content: "\e8c8";
     }
+
+    <style >
+    #customTbarDialog #special_char,
+    #customTbarDialog .char_block {
+        display: inline-block;
+    }
+
+    #custom_tbar,
+    #custom_tbar div {
+        cursor: pointer;
+    }
+
+    #rteSpecial_char {
+        padding: 15px 0 15px 0;
+    }
+
+    #customTbarDialog .char_block.e-active {
+        outline: 1px solid #e3165b;
+        border-color: #e3165b;
+    }
+
+    .material #customTbarDialog .char_block.e-active {
+        outline: 1px solid #e3165b;
+        border-color: #e3165b;
+    }
+
+    .material-dark #customTbarDialog .char_block.e-active {
+        outline: 1px solid #56a4fd;
+        border-color: #56a4fd;
+    }
+
+    .fabric #customTbarDialog .char_block.e-active,
+    .fabric-dark #customTbarDialog .char_block.e-active {
+        outline: 1px solid #0078d6;
+        border-color: #0078d6;
+    }
+
+    .bootstrap4 #customTbarDialog .char_block.e-active {
+        outline: 1px solid #007bff;
+        border-color: #007bff;
+    }
+
+    .bootstrap #customTbarDialog .char_block.e-active,
+    .bootstrap-dark #customTbarDialog .char_block.e-active {
+        outline: 1px solid #317ab9;
+        border-color: #317ab9;
+    }
+
+    .highcontrast #customTbarDialog .char_block.e-active {
+        outline: 1px solid #ffd939;
+        border-color: #ffd939;
+    }
+
+    .tailwind #customTbarDialog .char_block.e-active {
+        outline: 1px solid #3730a3;
+        border-color: #3730a3;
+    }
+
+    .tailwind-dark #customTbarDialog .char_block.e-active {
+        outline: 1px solid #22d3ee;
+        border-color: #22d3ee;
+    }
+
+    .bootstrap5 #customTbarDialog .char_block.e-active,
+    .bootstrap5-dark #customTbarDialog .char_block.e-active {
+        outline: 1px solid #0D6EFD;
+        border-color: #0D6EFD;
+    }
+
+    .bootstrap5 #customTbarDialog .char_block.e-active {
+        outline: 1px solid #0D6EFD;
+        border-color: #0D6EFD;
+    }
+
+    .fluent #customTbarDialog .char_block.e-active,
+    .fluent-dark #customTbarDialog .char_block.e-active {
+        outline: 1px solid #0078DE;
+        border-color: #0078DE;
+    }
+
+    .material3 .e-rte-custom-tbar-section .char_block.e-active,
+    .material3-dark .e-rte-custom-tbar-section .char_block.e-active {
+        outline: 1px solid #7D69B1;
+        border-color: #7D69B1;
+    }
+
+    #customTbarDialog .char_block {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        margin: 0 5px 5px 0;
+        text-align: center;
+        vertical-align: middle;
+        border: 1px solid #DDDDDD;
+        font-size: 20px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    #custom_tbar .rtecustomtool {
+        font-size: 18px;
+    }
+
+    @@media (min-width: 320px) and (max-width: 480px) {
+        #rteSpecial_char {
+            padding: 15px 0 15px 0;
+        }
+    }
 </style>
+
+
+
 <div class="row">
     <div class="col-8">
         <ejs-richtexteditor id="defaultRTE" toolbarClick="onToolbarClick" showCharCount="true" actionBegin="handleFullScreen" actionComplete="actionCompleteHandler" maxLength="2000" created="created" enableTabKey="true">
@@ -92,6 +203,7 @@
 <div id="toast_copy_content" >
 </div>
 
+<button type="button" class="btn btn-primary" onclick="ShowContent()">show Data</button>
 
 @* 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.js" type="text/javascript"></script>
@@ -101,10 +213,34 @@
 
 <script type="text/javascript">
 
+    function ShowContent() {
+        var templateBody = document.getElementById("defaultRTE").ej2_instances[0];
+
+        console.log(templateBody.value);
+    }
 
     function onToolbarClick(e) {
         if (e.item.tooltipText==="Select All") {
             this.selectAll();
+        }
+        else if (e.item.tooltipText === "Insert Symbol") {
+            dialogObj.element.style.display = '';
+            ranges = selection.getRange(document);
+            saveSelection = selection.save(ranges, document);
+            dialogObj.width = rteObj.element.offsetWidth * 0.5;
+            dialogObj.show();
+
+            var dialogCtn = document.getElementById('rteSpecial_char');
+            dialogCtn.onclick = function (e) {
+                var target = e.target;
+                var activeEle = dialogObj.element.querySelector('.char_block.e-active');
+                if (target.classList.contains('char_block')) {
+                    target.classList.add('e-active');
+                    if (activeEle) {
+                        activeEle.classList.remove('e-active');
+                    }
+                }
+            };
         }
     }
     function beforeCopy(a) {
@@ -126,7 +262,8 @@
     function onDialogCreate() {
         dialogObj = this;
         dialogObj.element.style.maxHeight = '300px';
-    }
+    }  
+   
     function onInsert() {
         var activeEle = dialogObj.element.querySelector('.char_block.e-active');
         if (rteObj.formatter.getUndoRedoStack().length === 0) {
@@ -165,32 +302,21 @@
 
         selection = new ej.richtexteditor.NodeSelection();
         var customBtn = rteObj.element.querySelector('#custom_tbar');
-        customBtn.onclick = function (e) {
-            dialogObj.element.style.display = '';
-            ranges = selection.getRange(document);
-            saveSelection = selection.save(ranges, document);
-            dialogObj.width = rteObj.element.offsetWidth * 0.5;
-            dialogObj.show();
-            var dialogCtn = document.getElementById('rteSpecial_char');
-            dialogCtn.onclick = function (e) {
-                var target = e.target;
-                var activeEle = dialogObj.element.querySelector('.char_block.e-active');
-                if (target.classList.contains('char_block')) {
-                    target.classList.add('e-active');
-                    if (activeEle) {
-                        activeEle.classList.remove('e-active');
-                    }
-                }
-            };
-            customBtn.onclick = function (e) {
-                rteObj.focusIn();
-                dialogObj.element.style.display = '';
-                ranges = selection.getRange(document);
-                saveSelection = selection.save(ranges, document);
-                dialogObj.width = rteObj.element.offsetWidth * 0.5;
-                dialogObj.show();
-            };
-        };
+        // customBtn.onclick = function (e) {
+        //     dialogObj.element.style.display = '';
+        //     ranges = selection.getRange(document);
+        //     saveSelection = selection.save(ranges, document);
+        //     dialogObj.width = rteObj.element.offsetWidth * 0.5;
+        //     dialogObj.show();
+        //     customBtn.onclick = function (e) {
+        //         rteObj.focusIn();
+        //         dialogObj.element.style.display = '';
+        //         ranges = selection.getRange(document);
+        //         saveSelection = selection.save(ranges, document);
+        //         dialogObj.width = rteObj.element.offsetWidth * 0.5;
+        //         dialogObj.show();
+        //     };
+        // };
     }
 
     function handleFullScreen(e) {

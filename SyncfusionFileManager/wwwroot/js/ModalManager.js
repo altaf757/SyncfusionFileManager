@@ -45,9 +45,9 @@ ModalManager = (function () {
         var _containerId = modalId + 'Container';
         return $('<div id="' + _containerId + '"></div>')
             .append(
-                '<div id="' + modalId + '" class="modal fade" tabindex="-1" role="modal" aria-hidden="true" style="z-index:' + getModalZIndex() + '">' +
-                '  <div class="modal-dialog ' + modalSize + '">' +
-                '    <div class="modal-content"></div>' +
+                '<div id="' + modalId + '" class="modal fade fixed z-50 w-full md:inset-0 h-modal md:h-full justify-center items-center flex e-lib e-draggable" tabindex="-1" role="modal" aria-hidden="true" style="z-index:' + getModalZIndex() + '">' +
+                '  <div class="modal-dialog relative p-4 max-w-4xl h-full md:h-fit modal-dialog-scrollable ' + modalSize + '">' +
+                '    <div class="modal-content modal-content relative bg-white rounded-lg shadow dark:bg-gray-700"></div>' +
                 '  </div>' +
                 '</div>'
             ).appendTo('body');
